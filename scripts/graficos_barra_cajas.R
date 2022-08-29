@@ -31,9 +31,9 @@ ggplot(data = tail(tabla_clase_larga,60),aes(x=as.yearmon(fecha))) +
 
 ggplot(data = covid,aes(y=EDAD)) +
   geom_boxplot(outlier.colour="red",fill="yellow")+
-  stat_boxplot(geom ='errorbar')
+  stat_boxplot(geom ='errorbar') 
 
-summary(covid[covid$SEXO_DESCRIPCION == "Hombres",]$EDAD)
+summary(covid$EDAD)
 
 ggplot(data = covid) +
   geom_boxplot(aes(y=EDAD,fill=SEXO_DESCRIPCION),outlier.colour="red")
