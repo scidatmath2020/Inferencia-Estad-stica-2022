@@ -3,6 +3,8 @@ library(ggplot2)
 
 covid <- read.csv("covid.csv")
 
+names(covid)
+
 ggplot(data = covid) +
   geom_bar(aes(x=ENTIDAD_RES_ABR),fill = "darkgreen") +
   ggpubr::rotate_x_text()
@@ -27,18 +29,23 @@ ggplot(data = tail(tabla_clase_larga,60),aes(x=as.yearmon(fecha))) +
 ###########################
 ###########################
 
-ggplot(data = covid) +
-  geom_boxplot(aes(y=EDAD,fill=SEXO_DESCRIPCION),outlier.colour="red")
+ggplot(data = covid,aes(y=EDAD)) +
+  geom_boxplot(outlier.colour="red",fill="yellow")+
+  stat_boxplot(geom ='errorbar')
 
 summary(covid[covid$SEXO_DESCRIPCION == "Hombres",]$EDAD)
 
 ggplot(data = covid) +
   geom_boxplot(aes(y=EDAD,fill=SEXO_DESCRIPCION),outlier.colour="red")
 
+ggplot(data = covid) +
+  geom_boxplot(aes(x=ENTIDAD_RES_ABR,y=EDAD,fill=SEXO_DESCRIPCION),outlier.colour="red")
 
 ggplot(data = tabla_clase_larga,aes(y=total,fill = clase)) +
   geom_boxplot(outlier.colour="red")+
   stat_boxplot(geom ='errorbar')
+
+###############
 
 tabla_robos <- tabla_clase_larga[tabla_clase_larga$clase == "robos",]
 
@@ -50,6 +57,14 @@ Q3 = quantile(tabla_robos$total)[4]
 
 barrera_superior <- Q3+1.5*rango
 barrera_inferior <- Q1-1.5*rango
+
+ggplot(data = tabla_robos,aes(y=total)) +
+  geom_boxplot(outlier.colour="red",fill="green")+
+  stat_boxplot(geom ='errorbar')+
+  geom_abline(slope = 0, intercept = barrera_superior, color="blue")  +
+  geom_abline(slope = 0, intercept = barrera_inferior, color = "red" ) +
+  ylim(c(250000,2500000))
+
 
 tabla_robos[tabla_robos$total > barrera_superior,]
 
@@ -64,16 +79,19 @@ Q3 = quantile(tabla_fraudes$total)[4]
 barrera_superior <- Q3+1.5*rango
 barrera_inferior <- Q1-1.5*rango
 
+ggplot(data = tabla_fraudes,aes(y=total)) +
+  geom_boxplot(outlier.colour="red",fill="green")+
+  stat_boxplot(geom ='errorbar')+
+  geom_abline(slope = 0, intercept = barrera_superior, color="blue",linetype = "dashed")  +
+  geom_abline(slope = 0, intercept = barrera_inferior, color = "red",linetype = "dashed" ) +
+  ylim(c(35000,750000))
+
+
 tabla_fraudes[tabla_fraudes$total > barrera_superior,]
 
 ########################################
 
-ggplot(data = tabla_robos,aes(y=total)) +
-  geom_boxplot(outlier.colour="red",fill="green")+
-  stat_boxplot(geom ='errorbar')+
-  geom_abline(slope = 0, intercept = 398347.2, color="blue")  +
-  geom_abline(slope = 0, intercept = 1693084, color = "red" ) +
-  ylim(c(250000,2500000))
+
   
 
 
