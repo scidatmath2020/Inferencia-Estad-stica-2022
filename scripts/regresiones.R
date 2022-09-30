@@ -87,4 +87,106 @@ modelo_simplificado <- lm(formula = esp_vida ~ ingresos + asesinatos + universit
 
 summary(modelo_simplificado)
 
+confint(modelo_simplificado)
 
+summary(modelo_simplificado)
+
+muestra$entidad
+
+
+############
+
+newdata = data.frame(ingresos = c(3624,4675),
+                     asesinatos = c(15.1,2.3),
+                     universitarios = c(41.3,57.6),
+                     area =c(50708,79289))
+
+modelo_simplificado
+
+predict.lm(modelo_simplificado,
+           newdata,
+           interval = "prediction",
+           level = 0.95)
+
+newdata_extremo = data.frame(ingresos = c(0),
+                     asesinatos = c(0),
+                     universitarios = c(0),
+                     area =c(0))
+
+predict.lm(modelo_simplificado,
+           newdata_extremo,
+           interval = "prediction",
+           level = 0.95)
+
+summary(modelo_simplificado)
+
+####################  Diagnósticos de regresión
+
+#### Gaussianidad de los residuos
+
+library(fBasics)
+shapiroTest(modelo_simplificado$residuals)
+
+#### Homocedasticidad
+# install.packages("lmtest")
+library(lmtest)
+
+bptest(modelo_simplificado)
+
+library(ggplot2)
+ggplot(data = muestra, aes(modelo_simplificado$fitted.values, modelo_simplificado$residuals)) +
+  geom_point() +
+  geom_hline(yintercept = 0) +
+  theme_bw()
+
+#### Independencia de los residuos
+# install.packages("car")
+library(car)
+
+dwt(modelo_simplificado,alternative="two.sided")
+
+#### Aditividad
+residualPlots(modelo_simplificado,plot=TRUE)
+
+#### Linealidad
+crPlots(modelo_simplificado)
+
+summary(modelo_simplificado)
+
+
+#### Anscombe
+
+anscombe
+
+ans1 <- anscombe[,c(1,5)]
+ans2 <- anscombe[,c(2,6)]
+ans3 <- anscombe[,c(3,7)]
+ans4 <- anscombe[,c(4,8)]
+
+summary(lm(y1~x1,data=ans1))
+summary(lm(y2~x2,data=ans2))
+summary(lm(y3~x3,data=ans3))
+summary(lm(y4~x4,data=ans4))$r.squared
+
+
+modelo_ans2 <- lm(y2~x2,data=ans2)
+
+residualPlots(modelo_ans2,plot=TRUE)
+crPlots(modelo_ans2)
+
+#### Detección de observaciones anómalas
+
+#### Leverages
+
+apalancamientos <- which(hatvalues(modelo_simplificado)>2*(4+1)/35)
+muestra$entidad[apalancamientos]
+
+#### Outliers de regresión
+
+outlierTest(modelo_simplificado)
+
+#### Observaciones influyentes
+
+influyentes <- which(cooks.distance(modelo_simplificado)>4/(35-4-2))
+influyentes
+muestra$entidad[influyentes]
